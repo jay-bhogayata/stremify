@@ -1,0 +1,52 @@
+version: '3'
+services:
+  stremify-api:
+    image: jaybhogayata/stremify:latest
+    ports:
+      - '8080:8080'
+      - '9000:9000'
+    environment:
+      - APP_ENV=prod
+    volumes:
+      - stremify-logs:/app/logs
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    
+  loki:
+    image: grafana/loki
+    ports:
+      - '3100:3100'
+    volumes:
+      - loki-data:/loki
+
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      - '16686:16686'
+      - '4318:4318'
+    
+volumes:
+  stremify-logs:
+  prometheus-data:
+  grafana-data:
+  loki-data:
+  grafana-provisioning:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./grafana/provisioning
