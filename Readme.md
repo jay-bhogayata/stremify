@@ -9,6 +9,8 @@
 
 - Node.js
 - npm
+- Docker - for running the database in a container.
+
 
 
 ## Installation
