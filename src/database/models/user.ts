@@ -1,4 +1,3 @@
-import { eq, relations } from "drizzle-orm";
 import {
   boolean,
   pgEnum,
@@ -8,8 +7,13 @@ import {
   varchar,
   index,
 } from "drizzle-orm/pg-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { eq, relations } from "drizzle-orm";
 import { otpTable } from "./otp";
+import { db } from "../connection";
+import { PostgresError } from "postgres";
+import { SignUpUserRequest, User } from "../../types";
+import CustomError from "../../utils/customError";
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 export const userRoles = pgEnum("role", ["guest", "subscriber", "admin"]);
 
@@ -32,10 +36,39 @@ export const userTable = pgTable(
   }
 );
 
-export const userRelations = relations(userTable, ({ many }) => ({
-  otps: many(otpTable),
-}));
+export async function createUser(
+  user: SignUpUserRequest,
+  db: PostgresJsDatabase<any>
+): Promise<User> {
+  try {
+    const createdUser = await db
+      .insert(userTable)
+      .values({
+        name: user.name,
+        email: user.email,
+        password: user.password,
+      })
+      .returning({
+        id: userTable.id,
+        name: userTable.name,
+        email: userTable.email,
+        role: userTable.role,
+      });
 
-const insetUserSchema = createInsertSchema(userTable);
+    return createdUser[0];
+  } catch (error: unknown) {
+    if (error instanceof PostgresError && error.code === "23505") {
+      throw new CustomError("user with this email already exists", 409);
+    } else {
+      console.log(error);
+      throw new CustomError("error in creating user", 500);
+    }
+  }
+}
 
-const selectUserSchema = createSelectSchema(userTable);
+export async function deleteUserById(
+  userId: string,
+  db: PostgresJsDatabase<any>
+) {
+  await db.delete(userTable).where(eq(userTable.id, userId));
+}
