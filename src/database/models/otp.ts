@@ -2,6 +2,7 @@ import { varchar, timestamp, pgTable, uuid } from "drizzle-orm/pg-core";
 import { userTable } from "./user";
 
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { eq } from "drizzle-orm";
 
 export const otpTable = pgTable("otp", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -24,4 +25,18 @@ export async function insertOTP(
     otp,
     expiresAt,
   });
+}
+
+export async function getOTPByUserId(
+  userId: string,
+  db: PostgresJsDatabase<any>
+) {
+  const result = await db
+    .select({
+      otp: otpTable.otp,
+      expiredAt: otpTable.expiresAt,
+    })
+    .from(otpTable)
+    .where(eq(otpTable.userId, userId));
+  return result[0];
 }

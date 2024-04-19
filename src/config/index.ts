@@ -8,6 +8,7 @@ const config = {
   AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
   AWS_SES_SENDER_EMAIL: process.env.AWS_SES_SENDER_EMAIL,
+  OTP_EXPIRY_TIME_IN_MINUTES: process.env.OTP_EXPIRY_TIME_IN_MINUTES || 10,
 };
 
 function checkEnvVariable(name: string, value: string | undefined) {
