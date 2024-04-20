@@ -1,6 +1,7 @@
 import config from "../config/index";
 import transporter from "../config/transporter";
 import CustomError from "../utils/customError";
+import { logger } from "../utils/logger";
 
 interface MailOptions {
   to: string;
@@ -21,7 +22,7 @@ export const sendMail = async (mailOptions: MailOptions) => {
 
     await transporter.sendMail(message);
   } catch (error) {
-    console.error("error in sending email", error);
+    logger.error("error in sending email", error);
     throw new CustomError("Failed to send email.", 500);
   }
 };
