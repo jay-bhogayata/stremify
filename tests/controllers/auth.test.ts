@@ -1,8 +1,16 @@
-import { signUp } from "../../src/controllers/auth.controller";
+import { signUp, verifyUser } from "../../src/controllers/auth.controller";
 import { Request, Response } from "express";
 import { db } from "../../src/database/connection";
-import { createUser, deleteUserById } from "../../src/database/models/user";
-import { insertOTP } from "../../src/database/models/otp";
+import {
+  createUser,
+  deleteUserById,
+  verifyUserById,
+} from "../../src/database/models/user";
+import {
+  deleteOTPByUserId,
+  getOTPByUserId,
+  insertOTP,
+} from "../../src/database/models/otp";
 import { hashPassword } from "../../src/utils/password";
 import { sendMail } from "../../src/helpers/mail-helper";
 import generateOTP from "../../src/utils/generateOTP";
@@ -178,5 +186,86 @@ describe("signUp", () => {
     });
 
     expect(deleteUserById).not.toHaveBeenCalled();
+  });
+});
+
+describe("verifyUser", () => {
+  it("verifies a user successfully", async () => {
+    const mockReq = {
+      params: { userID: "11f49ff-2cbb-4b66-8b73-53a3bee6103b" },
+      body: { otp: "123456" },
+    } as unknown as Request;
+
+    const mockRes = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const mockOTPInfo = {
+      otp: "123456",
+      expiredAt: new Date(Date.now() + 10000),
+    };
+
+    const mockUser = {
+      id: "11f49ff-2cbb-4b66-8b73-53a3bee6103b",
+      name: "Test User",
+      email: "test@example.com",
+      role: "guest",
+      verified: true,
+    };
+
+    (
+      getOTPByUserId as jest.MockedFunction<typeof getOTPByUserId>
+    ).mockResolvedValueOnce(mockOTPInfo);
+    (
+      verifyUserById as jest.MockedFunction<typeof verifyUserById>
+    ).mockResolvedValueOnce({
+      ...mockUser,
+      role: "guest",
+    });
+    (
+      deleteOTPByUserId as jest.MockedFunction<typeof deleteOTPByUserId>
+    ).mockResolvedValueOnce(undefined);
+
+    await verifyUser(mockReq, mockRes, jest.fn());
+
+    expect(getOTPByUserId).toHaveBeenCalledWith(mockReq.params.userID, db);
+    expect(verifyUserById).toHaveBeenCalledWith(mockReq.params.userID, db);
+    expect(deleteOTPByUserId).toHaveBeenCalledWith(mockReq.params.userID, db);
+
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      message: "user is verified successfully",
+      user: mockUser,
+    });
+  });
+  it("response with error when user id not found", async () => {
+    const mockReq = {
+      params: { userID: "11f49ff-2cbb-4b66-8b73-53a3bee6103b" },
+      body: { otp: "123456" },
+    } as unknown as Request;
+
+    const mockRes = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    const mockErrorInfo = {
+      code: "22P02",
+      message: "Invalid user id",
+    };
+
+    (
+      getOTPByUserId as jest.MockedFunction<typeof getOTPByUserId>
+    ).mockRejectedValue(new CustomError(mockErrorInfo.message, 400));
+
+    await verifyUser(mockReq, mockRes, jest.fn());
+
+    expect(verifyUserById).not.toHaveBeenCalled();
+    expect(deleteOTPByUserId).not.toHaveBeenCalled();
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      message: "Invalid user id",
+    });
   });
 });
