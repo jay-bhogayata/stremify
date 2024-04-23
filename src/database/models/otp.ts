@@ -3,6 +3,7 @@ import { userTable } from "./user";
 
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { eq } from "drizzle-orm";
+import CustomError from "../../utils/customError";
 
 export const otpTable = pgTable("otp", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -31,12 +32,33 @@ export async function getOTPByUserId(
   userId: string,
   db: PostgresJsDatabase<any>
 ) {
-  const result = await db
-    .select({
-      otp: otpTable.otp,
-      expiredAt: otpTable.expiresAt,
-    })
-    .from(otpTable)
-    .where(eq(otpTable.userId, userId));
-  return result[0];
+  try {
+    const result = await db
+      .select({
+        otp: otpTable.otp,
+        expiredAt: otpTable.expiresAt,
+      })
+      .from(otpTable)
+      .where(eq(otpTable.userId, userId));
+
+    return result[0];
+  } catch (error: any) {
+    if (error.code === "22P02") {
+      throw new CustomError("Invalid user id", 400);
+    }
+
+    throw new CustomError("Failed to get OTP", 500);
+  }
+}
+
+export async function deleteOTPByUserId(
+  userId: string,
+  db: PostgresJsDatabase<any>
+) {
+  try {
+    await db.delete(otpTable).where(eq(otpTable.userId, userId));
+  } catch (error) {
+    console.error(error);
+    throw new CustomError("Failed to delete OTP", 500);
+  }
 }

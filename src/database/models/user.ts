@@ -7,13 +7,12 @@ import {
   varchar,
   index,
 } from "drizzle-orm/pg-core";
-import { eq, relations } from "drizzle-orm";
-import { otpTable } from "./otp";
-import { db } from "../connection";
+import { eq } from "drizzle-orm";
 import { PostgresError } from "postgres";
 import { SignUpUserRequest, User } from "../../types";
 import CustomError from "../../utils/customError";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { logger } from "../../utils/logger";
 
 export const userRoles = pgEnum("role", ["guest", "subscriber", "admin"]);
 
@@ -70,5 +69,38 @@ export async function deleteUserById(
   userId: string,
   db: PostgresJsDatabase<any>
 ) {
-  await db.delete(userTable).where(eq(userTable.id, userId));
+  try {
+    await db.delete(userTable).where(eq(userTable.id, userId));
+  } catch (error) {
+    logger.error(`failed to delete user with id: ${userId} : ${error}`);
+    throw new CustomError("failed to delete user", 500);
+  }
+}
+
+export async function verifyUserById(
+  userId: string,
+  db: PostgresJsDatabase<any>
+) {
+  try {
+    const user = await db
+      .update(userTable)
+      .set({
+        verified: true,
+      })
+      .where(eq(userTable.id, userId))
+      .returning({
+        id: userTable.id,
+        name: userTable.name,
+        email: userTable.email,
+        role: userTable.role,
+        verified: userTable.verified,
+      });
+
+    return user[0];
+  } catch (error: unknown) {
+    console.error(
+      `Failed to verify user with id ${userId}: ${(error as Error).message}`
+    );
+    throw new CustomError("failed to verify user", 500);
+  }
 }
