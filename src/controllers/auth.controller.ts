@@ -2,14 +2,23 @@ import { Request, Response } from "express";
 import asyncHandler from "../utils/asyncHandler";
 import { z } from "zod";
 import CustomError from "../utils/customError";
-import { createUser, deleteUserById } from "../database/models/user";
+import {
+  createUser,
+  deleteUserById,
+  verifyUserById,
+} from "../database/models/user";
 import { SignUpUserRequest } from "../types";
 import generateOTP from "../utils/generateOTP";
 import config from "../config";
-import { insertOTP } from "../database/models/otp";
+import {
+  deleteOTPByUserId,
+  getOTPByUserId,
+  insertOTP,
+} from "../database/models/otp";
 import { hashPassword } from "../utils/password";
 import { sendMail, PrepareEmailHtmlBody } from "../helpers/mail-helper";
 import { db } from "../database/connection";
+import { logger } from "../utils/logger";
 
 const sendVerificationEmail = async (email: string, otp: string) => {
   const body: string = PrepareEmailHtmlBody(otp);
@@ -80,3 +89,69 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 // TODO: if otp is send successfully but user is not verified then send them email about verification after some time use some kind of scheduler mechanism.
+
+const verifyUserReqBody = z.object({
+  otp: z.string().length(6, {
+    message: "OTP length must be 8",
+  }),
+});
+
+export const verifyUser = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const { otp } = verifyUserReqBody.parse(req.body);
+    const userID: string = req.params.userID;
+    const otpInfo = await getOTPByUserId(userID, db);
+
+    if (otpInfo) {
+      if (new Date(otpInfo.expiredAt) < new Date()) {
+        logger.error("otp is expired", {
+          otp: otpInfo,
+          user_id: userID,
+        });
+        res.status(401).json({
+          error: "your otp is expired try getting new one",
+        });
+      } else {
+        if (otp !== otpInfo.otp) {
+          logger.error("Invalid OTP", {
+            otp: otpInfo,
+            user_id: userID,
+          });
+
+          res.status(401).json({
+            error: "Invalid OTP",
+          });
+        } else {
+          const user = await verifyUserById(userID, db);
+          if (user) {
+            res
+              .status(200)
+              .json({ message: "user is verified successfully", user: user });
+          }
+          await deleteOTPByUserId(userID, db);
+        }
+      }
+    } else {
+      logger.error("otp is not found", {
+        user_id: userID,
+      });
+
+      res.status(404).json({
+        error: "otp is not found",
+      });
+    }
+
+    res.status(200).json(req.params.userID);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      const Errors = error.errors.map(({ path, message }) => ({
+        field: path[0],
+        message,
+      }));
+
+      res.status(400).json({ errors: Errors });
+    } else if (error instanceof CustomError) {
+      res.status(error.code).json({ message: error.message });
+    }
+  }
+});
