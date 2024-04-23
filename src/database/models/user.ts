@@ -104,3 +104,25 @@ export async function verifyUserById(
     throw new CustomError("failed to verify user", 500);
   }
 }
+
+export async function getUserByEmail(
+  email: string,
+  db: PostgresJsDatabase<any>
+): Promise<User | null> {
+  try {
+    const user = await db
+      .select()
+      .from(userTable)
+      .where(eq(userTable.email, email));
+    return user[0] || null;
+  } catch (error) {
+    if (error instanceof PostgresError) {
+      if (error.code === "P0002") {
+        throw new CustomError("user not found", 404);
+      }
+    }
+
+    logger.error(`failed to get user with email: ${email} : ${error}`);
+    throw new CustomError("failed to get user", 500);
+  }
+}
