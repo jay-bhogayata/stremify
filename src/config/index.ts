@@ -14,12 +14,11 @@ const config = {
 };
 
 function checkEnvVariable(name: string, value: string | undefined) {
-  if (!value) {
+  if (!value && process.env.NODE_ENV !== "test") {
     console.error(`No ${name}. Set ${name} environment variable.`);
     process.exit(1);
   }
 }
-
 checkEnvVariable("DATABASE_URL", config.DATABASE_URL);
 checkEnvVariable("AWS_REGION", config.AWS_REGION);
 checkEnvVariable("AWS_ACCESS_KEY", config.AWS_ACCESS_KEY);
