@@ -11,6 +11,9 @@ const config = {
   OTP_EXPIRY_TIME_IN_MINUTES: process.env.OTP_EXPIRY_TIME_IN_MINUTES || 10,
   APP_ENV: process.env.APP_ENV || "dev",
   LOG_LEVEL: process.env.LOG_LEVEL || "info",
+  SESSION_SECRET:
+    process.env.SESSION_SECRET ||
+    "E+RKQkiQTvaa3ClNDgRKgcMpugJkfiBLeroNINiNJms=",
 };
 
 function checkEnvVariable(name: string, value: string | undefined) {
