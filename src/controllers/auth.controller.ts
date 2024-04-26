@@ -5,9 +5,10 @@ import CustomError from "../utils/customError";
 import {
   createUser,
   deleteUserById,
+  getUserByEmail,
   verifyUserById,
 } from "../database/models/user";
-import { SignUpUserRequest } from "../types";
+import { SignUpUserRequest, User } from "../types";
 import generateOTP from "../utils/generateOTP";
 import config from "../config";
 import {
@@ -15,10 +16,11 @@ import {
   getOTPByUserId,
   insertOTP,
 } from "../database/models/otp";
-import { hashPassword } from "../utils/password";
+import { comparePassword, hashPassword } from "../utils/password";
 import { sendMail, PrepareEmailHtmlBody } from "../helpers/mail-helper";
 import { db } from "../database/connection";
 import { logger } from "../utils/logger";
+import { SessionData } from "express-session";
 
 const sendVerificationEmail = async (email: string, otp: string) => {
   const body: string = PrepareEmailHtmlBody(otp);
@@ -152,6 +154,80 @@ export const verifyUser = asyncHandler(async (req: Request, res: Response) => {
       res.status(400).json({ errors: Errors });
     } else if (error instanceof CustomError) {
       res.status(error.code).json({ message: error.message });
+    }
+  }
+});
+
+const loginRequestBody = z.object({
+  email: z
+    .string()
+    .email("Invalid email format. Please provide a valid email address"),
+  password: z.string().min(8, {
+    message: "Invalid password , password must be at least 8 characters long",
+  }),
+});
+
+const validateUser = async (email: string, password: string) => {
+  const user = await getUserByEmail(email, db);
+
+  if (!user) {
+    throw new CustomError("user not found", 404);
+  }
+
+  if (!user.verified) {
+    throw new CustomError("user is not verified", 401);
+  }
+
+  if (user.password) {
+    const isPasswordValid = await comparePassword(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new CustomError("Invalid password", 401);
+    }
+  } else {
+    logger.error("user password is undefined");
+    throw new CustomError("Internal server error", 500);
+  }
+
+  return user;
+};
+
+const createSessionUser = (user: User) => ({
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  verified: user.verified,
+});
+
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const { email, password } = loginRequestBody.parse(req.body);
+    const user = await validateUser(email, password);
+    const sessionUser = createSessionUser(user);
+
+    (req.session as SessionData).isLoggedIn = true;
+    (req.session as SessionData).user = sessionUser;
+
+    req.session.regenerate((err: unknown) => {
+      if (err) {
+        throw new CustomError("Failed to login", 500);
+      }
+    });
+
+    res.status(200).json({ message: "login successful" });
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      const Errors = error.errors.map(({ path, message }) => ({
+        field: path[0],
+        message,
+      }));
+
+      res.status(400).json({ errors: Errors });
+    } else if (error instanceof CustomError) {
+      res.status(error.code).json({ message: error.message });
+    } else {
+      throw new CustomError(error, 500);
     }
   }
 });
