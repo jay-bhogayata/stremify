@@ -231,3 +231,16 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     }
   }
 });
+
+export const logout = asyncHandler(async (req: Request, res: Response) => {
+  (req.session as SessionData).destroy((err: unknown) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Could not log out, please try again" });
+    } else {
+      res.clearCookie("sessionId");
+      return res.status(200).json({ message: "Logged out successfully" });
+    }
+  });
+});
