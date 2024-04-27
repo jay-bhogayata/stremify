@@ -1,9 +1,14 @@
-import { signUp, verifyUser } from "../../src/controllers/auth.controller";
+import {
+  signUp,
+  validateUser,
+  verifyUser,
+} from "../../src/controllers/auth.controller";
 import { Request, Response } from "express";
 import { db } from "../../src/database/connection";
 import {
   createUser,
   deleteUserById,
+  getUserByEmail,
   verifyUserById,
 } from "../../src/database/models/user";
 import {
@@ -11,7 +16,7 @@ import {
   getOTPByUserId,
   insertOTP,
 } from "../../src/database/models/otp";
-import { hashPassword } from "../../src/utils/password";
+import { comparePassword, hashPassword } from "../../src/utils/password";
 import { sendMail } from "../../src/helpers/mail-helper";
 import generateOTP from "../../src/utils/generateOTP";
 import CustomError from "../../src/utils/customError";
@@ -21,6 +26,7 @@ jest.mock("../../src/database/models/otp");
 jest.mock("../../src/utils/password");
 jest.mock("../../src/helpers/mail-helper");
 jest.mock("../../src/utils/generateOTP");
+jest.mock("../../src/database/connection");
 jest.mock("../../src/database/connection");
 
 afterEach(() => {
@@ -267,5 +273,46 @@ describe("verifyUser", () => {
     expect(mockRes.json).toHaveBeenCalledWith({
       message: "Invalid user id",
     });
+  });
+});
+
+describe("validateUser", () => {
+  it("returns the user object when the user is verified and the password is valid", async () => {
+    const mockUser = {
+      id: "11f49ff-2cbb-4b66-8b73-53a3bee6103b",
+      name: "Test User",
+      email: "test@example.com",
+      password: "hashedPassword",
+      verified: true,
+      role: "guest" as const,
+    };
+
+    (
+      getUserByEmail as jest.MockedFunction<typeof getUserByEmail>
+    ).mockResolvedValueOnce(mockUser);
+    (
+      comparePassword as jest.MockedFunction<typeof comparePassword>
+    ).mockResolvedValueOnce(true);
+
+    const validatedUser = await validateUser("test@example.com", "password");
+    expect(validatedUser).toEqual(mockUser);
+  });
+  it("throws an error when the user is not verified", async () => {
+    const mockUser = {
+      id: "11f49ff-2cbb-4b66-8b73-53a3bee6103b",
+      name: "Test User",
+      email: "test@example.com",
+      password: "hashedPassword",
+      verified: false,
+      role: "guest" as const,
+    };
+
+    (
+      getUserByEmail as jest.MockedFunction<typeof getUserByEmail>
+    ).mockResolvedValueOnce(mockUser);
+
+    await expect(validateUser("test@example.com", "password")).rejects.toThrow(
+      new CustomError("user is not verified", 401)
+    );
   });
 });

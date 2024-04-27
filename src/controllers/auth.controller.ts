@@ -167,7 +167,7 @@ const loginRequestBody = z.object({
   }),
 });
 
-const validateUser = async (email: string, password: string) => {
+export const validateUser = async (email: string, password: string) => {
   const user = await getUserByEmail(email, db);
 
   if (!user) {
