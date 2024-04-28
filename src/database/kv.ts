@@ -2,7 +2,11 @@ import { createClient } from "redis";
 import RedisStore from "connect-redis";
 import { logger } from "../utils/logger";
 
-let redisClient = createClient();
+let redisClient = createClient({
+  socket: {
+    host: process.env.REDIS_HOST,
+  },
+});
 
 redisClient.connect();
 
