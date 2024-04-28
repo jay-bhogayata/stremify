@@ -13,5 +13,4 @@ export const db = drizzle(client, {
     otp,
     passwordReset,
   },
-  logger: true,
 });
