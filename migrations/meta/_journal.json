@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1713460086727,
+      "tag": "0000_nervous_silverclaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1713906749050,
+      "tag": "0001_complete_skreet",
+      "breakpoints": true
+    }
+  ]
+}
