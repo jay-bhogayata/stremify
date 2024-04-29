@@ -14,6 +14,7 @@ const config = {
   SESSION_SECRET:
     process.env.SESSION_SECRET ||
     "E+RKQkiQTvaa3ClNDgRKgcMpugJkfiBLeroNINiNJms=",
+  domain: process.env.DOMAIN,
 };
 
 function checkEnvVariable(name: string, value: string | undefined) {
