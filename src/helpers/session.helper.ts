@@ -5,7 +5,7 @@ import sessionStore from "../database/kv";
 
 // TODO: set secure to true in production , it is false for development, set domain to our domain , set ("trust proxy", 1) in production if we are behind a proxy
 
-export const sessionConfig: session.SessionOptions = {
+const sessionConfig: session.SessionOptions = {
   cookie: {
     path: "/",
     httpOnly: true,
@@ -22,7 +22,7 @@ export const sessionConfig: session.SessionOptions = {
   store: sessionStore,
 };
 
-export const sessionConfigSecure: session.SessionOptions = {
+const sessionConfigSecure: session.SessionOptions = {
   cookie: {
     path: "/",
     httpOnly: true,
@@ -40,3 +40,13 @@ export const sessionConfigSecure: session.SessionOptions = {
   saveUninitialized: false,
   store: sessionStore,
 };
+
+let session_config: session.SessionOptions;
+
+if (config.APP_ENV === "production") {
+  session_config = sessionConfigSecure;
+} else {
+  session_config = sessionConfig;
+}
+
+export { sessionConfig, sessionConfigSecure, session_config };
