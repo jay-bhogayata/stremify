@@ -40,5 +40,3 @@ export const sessionConfigSecure: session.SessionOptions = {
   saveUninitialized: false,
   store: sessionStore,
 };
-
-export default { sessionConfig, sessionConfigSecure };

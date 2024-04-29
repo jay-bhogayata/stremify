@@ -4,6 +4,7 @@ import router from "./routes";
 import { morganMiddleware } from "./utils/logger";
 import session from "express-session";
 import { sessionConfig } from "./helpers/session.helper";
+import { rateLimiter } from "./utils/ratelimit";
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session(sessionConfig));
 app.use(morganMiddleware);
+app.use(rateLimiter);
 
 app.use("/api/v1", router);
 
