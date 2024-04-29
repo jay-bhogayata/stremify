@@ -1,0 +1,42 @@
+services:
+  db_stremify:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pg123
+      POSTGRES_DB: stremify
+    ports:
+      - 5432:5432
+    networks:
+      - stremify
+    volumes:
+      - ./data:/var/lib/postgresql/data
+  
+  kv:
+    image: redis
+    ports:
+      - 6379:6379
+    networks:  
+      - stremify
+
+  server:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+    ports:
+      - 8080:8080
+    depends_on:
+      - db_stremify 
+      - kv
+    env_file:
+      - ./.env
+    networks:
+      - stremify
+
+networks:
+  stremify:
+    driver: "bridge"
+volumes:
+  data:
+    
