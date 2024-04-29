@@ -1,6 +1,5 @@
-[![Node.js CI](https://github.com/jay-bhogayata/stremify/actions/workflows/CI.yaml/badge.svg?branch=master)](https://github.com/jay-bhogayata/stremify/actions/workflows/CI.yaml) 
-[![codecov](https://codecov.io/gh/jay-bhogayata/stremify/graph/badge.svg?token=TX4OV0SUR3)](https://codecov.io/gh/jay-bhogayata/stremify)
-
+[![Node.js CI](https://github.com/jay-bhogayata/stremify/actions/workflows/CI.yaml/badge.svg)](https://github.com/jay-bhogayata/stremify/actions/workflows/CI.yaml)
+[![codecov](https://codecov.io/gh/jay-bhogayata/stremify/branch/dev/graph/badge.svg?token=TX4OV0SUR3)](https://codecov.io/gh/jay-bhogayata/stremify)
 # Stremify
 
 ## Description
