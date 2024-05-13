@@ -21,7 +21,9 @@
   "author": "Jay Bhogayata",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.565.0",
     "@aws-sdk/client-ses": "^3.556.0",
+    "@aws-sdk/s3-request-presigner": "^3.565.0",
     "argon2": "^0.40.1",
     "body-parser": "^1.20.2",
     "connect-redis": "^7.1.1",
