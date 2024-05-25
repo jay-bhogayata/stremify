@@ -161,3 +161,4 @@ SquareX Safe File Viewer
 terraform.rc
 .terraform.d/plugins
 .terraform.lock.hcl
+secret.tfvars
