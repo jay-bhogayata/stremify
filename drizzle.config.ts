@@ -1,4 +1,4 @@
-import { defineConfig } from "drizzle-kit";
+import { defineConfig, Config } from "drizzle-kit";
 import config from "./src/config/index";
 
 export default defineConfig({
@@ -8,9 +8,14 @@ export default defineConfig({
     "./src/database/models/password_reset.ts",
   ],
   out: "./migrations",
-  driver: "pg",
+  dialect: "postgresql",
   dbCredentials: {
-    connectionString: config.DATABASE_URL as string,
+    host: config.db.host,
+    port: Number(config.db.port),
+    user: config.db.user,
+    password: config.db.password,
+    database: config.db.database,
+    ssl: "require",
   },
   verbose: true,
   strict: true,

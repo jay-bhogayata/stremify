@@ -15,6 +15,14 @@ const config = {
     process.env.SESSION_SECRET ||
     "E+RKQkiQTvaa3ClNDgRKgcMpugJkfiBLeroNINiNJms=",
   domain: process.env.DOMAIN,
+  db: {
+    host: process.env.DB_HOST || "",
+    port: process.env.DB_PORT || 5432,
+    user: process.env.DB_USER || "postgres",
+    password: process.env.DB_PASSWORD || "postgres",
+    database: process.env.DB_NAME || "postgres",
+    ssl: process.env.DB_SSL === "require",
+  },
 };
 
 function checkEnvVariable(name: string, value: string | undefined) {
