@@ -93,6 +93,9 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
 // TODO: if otp is send successfully but user is not verified then send them email about verification after some time use some kind of scheduler mechanism.
 
 const verifyUserReqBody = z.object({
+  email: z
+    .string()
+    .email("Invalid email format. Please provide a valid email address"),
   otp: z.string().length(6, {
     message: "OTP length must be 8",
   }),
@@ -100,47 +103,57 @@ const verifyUserReqBody = z.object({
 
 export const verifyUser = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const { otp } = verifyUserReqBody.parse(req.body);
-    const userID: string = req.params.userID;
-    const otpInfo = await getOTPByUserId(userID, db);
+    const { otp, email } = verifyUserReqBody.parse(req.body);
 
-    if (otpInfo) {
-      if (new Date(otpInfo.expiredAt) < new Date()) {
-        logger.error("otp is expired", {
-          otp: otpInfo,
-          user_id: userID,
-        });
-        res.status(401).json({
-          error: "your otp is expired try getting new one",
-        });
-      } else {
-        if (otp !== otpInfo.otp) {
-          logger.error("Invalid OTP", {
+    const user = await getUserByEmail(email, db);
+
+    const userID: string | undefined = user?.id;
+
+    if (userID) {
+      const otpInfo = await getOTPByUserId(userID, db);
+
+      if (otpInfo) {
+        if (new Date(otpInfo.expiredAt) < new Date()) {
+          logger.error("otp is expired", {
             otp: otpInfo,
             user_id: userID,
           });
-
           res.status(401).json({
-            error: "Invalid OTP",
+            error: "your otp is expired try getting new one",
           });
         } else {
-          const user = await verifyUserById(userID, db);
-          if (user) {
-            res
-              .status(200)
-              .json({ message: "user is verified successfully", user: user });
+          if (otp !== otpInfo.otp) {
+            logger.error("Invalid OTP", {
+              otp: otpInfo,
+              user_id: userID,
+            });
+
+            res.status(401).json({
+              error: "Invalid OTP",
+            });
+          } else {
+            const user = await verifyUserById(userID, db);
+            if (user) {
+              res
+                .status(200)
+                .json({ message: "user is verified successfully", user: user });
+            }
+            await deleteOTPByUserId(userID, db);
           }
-          await deleteOTPByUserId(userID, db);
         }
+      } else {
+        logger.error("otp is not found", {
+          user_id: userID,
+        });
+
+        throw new CustomError("otp is not found", 404);
       }
     } else {
-      logger.error("otp is not found", {
-        user_id: userID,
+      logger.error("user not found", {
+        email,
       });
 
-      res.status(404).json({
-        error: "otp is not found",
-      });
+      throw new CustomError("user not found", 404);
     }
 
     res.status(200).json(req.params.userID);
@@ -243,4 +256,8 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
       return res.status(200).json({ message: "Logged out successfully" });
     }
   });
+});
+
+export const profile = asyncHandler(async (req: Request, res: Response) => {
+  res.status(200).json({ user: (req.session as SessionData).user });
 });
