@@ -3,7 +3,7 @@ FROM node:20.12.0-alpine as base
 WORKDIR /usr/src/app
 
 RUN --mount=type=cache,target=/root/.npm \
-    npm install -g pnpm@8.15.4
+    npm install -g pnpm@9.1.1
 
 FROM base as deps
 
