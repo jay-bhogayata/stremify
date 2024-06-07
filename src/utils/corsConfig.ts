@@ -10,7 +10,7 @@ type CorsOptionsType = {
 };
 
 export const corsOptions: CorsOptionsType = {
-  development: {
+  dev: {
     origin: true,
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
     allowedHeaders: [

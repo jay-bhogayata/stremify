@@ -16,6 +16,7 @@ app.disable("x-powered-by");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions[config.APP_ENV || "production"]));
+
 app.use(bodyParser.json());
 app.use(session(session_config));
 app.use(morganMiddleware);
