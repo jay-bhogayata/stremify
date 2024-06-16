@@ -10,7 +10,7 @@
     "serve": "node ./dist/index.js",
     "test": "jest --verbose",
     "test:cov": "jest --coverage",
-    "db:generate": "drizzle-kit generate:pg",
+    "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx ./src/database/migrate.ts",
     "db:studio": "npx drizzle-kit studio",
     "db:start": "docker run --name db_stremify -e POSTGRES_PASSWORD=pg123 -e POSTGRES_DB=stremify -dp 5432:5432 postgres:latest",
