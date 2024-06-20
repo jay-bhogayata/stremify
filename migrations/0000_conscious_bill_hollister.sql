@@ -76,12 +76,12 @@ CREATE TABLE IF NOT EXISTS "movie_images" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "movies" (
 	"movie_id" serial PRIMARY KEY NOT NULL,
-	"title" varchar(255) NOT NULL,
+	"title" varchar NOT NULL,
 	"release_year" integer NOT NULL,
 	"duration" integer,
 	"synopsis" text,
 	"rating" numeric(2, 1),
-	"age_rating" varchar(5),
+	"age_rating" varchar,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -99,43 +99,43 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "movie_actors" ADD CONSTRAINT "movie_actors_movie_id_movies_movie_id_fk" FOREIGN KEY ("movie_id") REFERENCES "public"."movies"("movie_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "movie_actors" ADD CONSTRAINT "movie_actors_movie_id_movies_movie_id_fk" FOREIGN KEY ("movie_id") REFERENCES "public"."movies"("movie_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "movie_actors" ADD CONSTRAINT "movie_actors_actor_id_actors_actor_id_fk" FOREIGN KEY ("actor_id") REFERENCES "public"."actors"("actor_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "movie_actors" ADD CONSTRAINT "movie_actors_actor_id_actors_actor_id_fk" FOREIGN KEY ("actor_id") REFERENCES "public"."actors"("actor_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "movie_content_warnings" ADD CONSTRAINT "movie_content_warnings_movie_id_movies_movie_id_fk" FOREIGN KEY ("movie_id") REFERENCES "public"."movies"("movie_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "movie_content_warnings" ADD CONSTRAINT "movie_content_warnings_movie_id_movies_movie_id_fk" FOREIGN KEY ("movie_id") REFERENCES "public"."movies"("movie_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "movie_content_warnings" ADD CONSTRAINT "movie_content_warnings_content_warning_id_content_warnings_content_warning_id_fk" FOREIGN KEY ("content_warning_id") REFERENCES "public"."content_warnings"("content_warning_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "movie_content_warnings" ADD CONSTRAINT "movie_content_warnings_content_warning_id_content_warnings_content_warning_id_fk" FOREIGN KEY ("content_warning_id") REFERENCES "public"."content_warnings"("content_warning_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "movie_genres" ADD CONSTRAINT "movie_genres_movie_id_movies_movie_id_fk" FOREIGN KEY ("movie_id") REFERENCES "public"."movies"("movie_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "movie_genres" ADD CONSTRAINT "movie_genres_movie_id_movies_movie_id_fk" FOREIGN KEY ("movie_id") REFERENCES "public"."movies"("movie_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "movie_genres" ADD CONSTRAINT "movie_genres_genre_id_genres_genre_id_fk" FOREIGN KEY ("genre_id") REFERENCES "public"."genres"("genre_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "movie_genres" ADD CONSTRAINT "movie_genres_genre_id_genres_genre_id_fk" FOREIGN KEY ("genre_id") REFERENCES "public"."genres"("genre_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "movie_images" ADD CONSTRAINT "movie_images_movie_id_movies_movie_id_fk" FOREIGN KEY ("movie_id") REFERENCES "public"."movies"("movie_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "movie_images" ADD CONSTRAINT "movie_images_movie_id_movies_movie_id_fk" FOREIGN KEY ("movie_id") REFERENCES "public"."movies"("movie_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

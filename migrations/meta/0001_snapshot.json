@@ -1,6 +1,6 @@
 {
-  "id": "7b9c86a2-8841-4228-89df-db6760c975bd",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "2330ebe8-e4b6-418f-a028-c4ec5417773c",
+  "prevId": "7b9c86a2-8841-4228-89df-db6760c975bd",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -256,7 +256,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "actors_actor_name_unique": {
+          "name": "actors_actor_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "actor_name"
+          ]
+        }
+      }
     },
     "public.content_warnings": {
       "name": "content_warnings",
@@ -278,7 +286,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "content_warnings_warning_type_unique": {
+          "name": "content_warnings_warning_type_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "warning_type"
+          ]
+        }
+      }
     },
     "public.genres": {
       "name": "genres",
@@ -300,7 +316,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "genres_genre_name_unique": {
+          "name": "genres_genre_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "genre_name"
+          ]
+        }
+      }
     },
     "public.movie_actors": {
       "name": "movie_actors",
@@ -585,7 +609,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "movies_title_unique": {
+          "name": "movies_title_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "title"
+          ]
+        }
+      }
     }
   },
   "enums": {
