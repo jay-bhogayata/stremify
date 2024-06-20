@@ -7,6 +7,7 @@ import { rateLimiter } from "./utils/ratelimit";
 import { session_config } from "./helpers/session.helper";
 import cors from "cors";
 import { corsOptions } from "./utils/corsConfig";
+import config from "./config";
 
 const app = express();
 
@@ -14,7 +15,8 @@ app.disable("x-powered-by");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors(corsOptions[process.env.NODE_ENV || "production"]));
+app.use(cors(corsOptions[config.APP_ENV || "production"]));
+
 app.use(bodyParser.json());
 app.use(session(session_config));
 app.use(morganMiddleware);

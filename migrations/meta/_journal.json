@@ -1,19 +1,26 @@
 {
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1713460086727,
-      "tag": "0000_nervous_silverclaw",
+      "version": "7",
+      "when": 1718612847807,
+      "tag": "0000_conscious_bill_hollister",
       "breakpoints": true
     },
     {
       "idx": 1,
-      "version": "5",
-      "when": 1713906749050,
-      "tag": "0001_complete_skreet",
+      "version": "7",
+      "when": 1718614758631,
+      "tag": "0001_orange_glorian",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1718614862547,
+      "tag": "0002_brown_abomination",
       "breakpoints": true
     }
   ]

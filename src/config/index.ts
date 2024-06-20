@@ -15,6 +15,15 @@ const config = {
     process.env.SESSION_SECRET ||
     "E+RKQkiQTvaa3ClNDgRKgcMpugJkfiBLeroNINiNJms=",
   domain: process.env.DOMAIN,
+  db: {
+    host: process.env.DB_HOST || "",
+    port: process.env.DB_PORT || 5432,
+    user: process.env.DB_USER || "postgres",
+    password: process.env.DB_PASSWORD || "postgres",
+    database: process.env.DB_NAME || "postgres",
+    ssl: process.env.DB_SSL === "require",
+  },
+  REDIS_URL: process.env.REDIS_URL,
 };
 
 function checkEnvVariable(name: string, value: string | undefined) {
@@ -28,5 +37,6 @@ checkEnvVariable("AWS_REGION", config.AWS_REGION);
 checkEnvVariable("AWS_ACCESS_KEY", config.AWS_ACCESS_KEY);
 checkEnvVariable("AWS_SECRET_ACCESS_KEY", config.AWS_SECRET_ACCESS_KEY);
 checkEnvVariable("AWS_SES_SENDER_EMAIL", config.AWS_SES_SENDER_EMAIL);
+checkEnvVariable("redis url", config.REDIS_URL);
 
 export default config;

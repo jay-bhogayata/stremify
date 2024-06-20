@@ -143,3 +143,22 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/node
 SquareX Safe File Viewer
 ✕
+
+# Local .terraform directories
+**/.terraform/*
+
+# Ignore variables files
+*.auto.tfvars
+
+# Ignore override files
+*.tfoverride
+
+# Ignore environment-specific files
+.envrc
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+.terraform.d/plugins
+.terraform.lock.hcl
+secret.tfvars

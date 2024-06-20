@@ -3,9 +3,7 @@ import RedisStore from "connect-redis";
 import { logger } from "../utils/logger";
 
 let redisClient = createClient({
-  socket: {
-    host: process.env.REDIS_HOST,
-  },
+  url: process.env.REDIS_URL,
 });
 
 redisClient.connect();
@@ -23,4 +21,4 @@ let sessionStore = new RedisStore({
   prefix: "session:",
 });
 
-export default sessionStore;
+export { redisClient, sessionStore };

@@ -2,29 +2,32 @@ import config from "../config";
 
 type CorsOptionsType = {
   [key: string]: {
-    origin: string | undefined;
+    origin: string | undefined | boolean;
     methods: string[];
     allowedHeaders: string[];
+    credentials?: boolean;
   };
 };
 
 export const corsOptions: CorsOptionsType = {
-  development: {
-    origin: "*",
-    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+  dev: {
+    origin: true,
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
       "Authorization",
       "Access-Control-Allow-Origin",
     ],
+    credentials: true,
   },
   production: {
     origin: config.domain,
-    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
       "Authorization",
       "Access-Control-Allow-Origin",
     ],
+    credentials: true,
   },
 };
