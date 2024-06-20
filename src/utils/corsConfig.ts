@@ -21,7 +21,7 @@ export const corsOptions: CorsOptionsType = {
     credentials: true,
   },
   production: {
-    origin: config.domain,
+    origin: config.DOMAIN,
     methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",

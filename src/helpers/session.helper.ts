@@ -29,7 +29,7 @@ const sessionConfigSecure: session.SessionOptions = {
     secure: true,
     maxAge: 24 * 60 * 60 * 1000,
     sameSite: "lax",
-    domain: config.domain,
+    domain: config.SESSION_DOMAIN,
   },
   secret: config.SESSION_SECRET,
   proxy: true,

@@ -14,7 +14,8 @@ const config = {
   SESSION_SECRET:
     process.env.SESSION_SECRET ||
     "E+RKQkiQTvaa3ClNDgRKgcMpugJkfiBLeroNINiNJms=",
-  domain: process.env.DOMAIN,
+  DOMAIN: process.env.DOMAIN,
+  SESSION_DOMAIN: process.env.SESSION_DOMAIN,
   db: {
     host: process.env.DB_HOST || "",
     port: process.env.DB_PORT || 5432,
