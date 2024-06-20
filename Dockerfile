@@ -2,7 +2,7 @@ FROM node:20.12.0-alpine as base
 
 WORKDIR /usr/src/app
 
-RUN npm install -g pnpm@9.1.1
+RUN npm install -g pnpm@9.1.1 --ignore-scripts
 
 FROM base as deps
 
