@@ -21,4 +21,4 @@ let sessionStore = new RedisStore({
   prefix: "session:",
 });
 
-export default sessionStore;
+export { redisClient, sessionStore };

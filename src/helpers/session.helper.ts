@@ -1,7 +1,7 @@
 import session from "express-session";
 import config from "../config";
 import { v4 as uuid } from "uuid";
-import sessionStore from "../database/kv";
+import { sessionStore } from "../database/kv";
 
 // TODO: set secure to true in production , it is false for development, set domain to our domain , set ("trust proxy", 1) in production if we are behind a proxy
 
