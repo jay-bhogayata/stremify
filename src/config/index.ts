@@ -25,6 +25,7 @@ const config = {
     ssl: process.env.DB_SSL === "require",
   },
   REDIS_URL: process.env.REDIS_URL,
+  FRONTEND_URL: process.env.FRONTEND_URL,
 };
 
 function checkEnvVariable(name: string, value: string | undefined) {

@@ -27,6 +27,8 @@ export const sendMail = async (mailOptions: MailOptions) => {
   }
 };
 
+const verifyUserPage = `${config.FRONTEND_URL}/verifyuser`;
+
 export function PrepareEmailHtmlBody(OTP: string): string {
   return `
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -106,6 +108,7 @@ export function PrepareEmailHtmlBody(OTP: string): string {
                 This code will only be valid for the next ${config.OTP_EXPIRY_TIME_IN_MINUTES} minutes. If the code
                 does not work, please request a new one.
               </p>
+           
               <code
                 style="
                   font-family: monospace;
@@ -119,7 +122,12 @@ export function PrepareEmailHtmlBody(OTP: string): string {
                 "
                 >${OTP}</code
               >
-              <hr
+                <p 
+                  style="margin: 15px 0 0; font-size: 14px; color: #3c4149"
+                >
+                  <a href=${verifyUserPage} style="color: #8366ec; text-decoration: none; font-size: 14px">Verify here</a> 
+                </p>
+                  <hr
                 style="
                   width: 100%;
                   border: none;
