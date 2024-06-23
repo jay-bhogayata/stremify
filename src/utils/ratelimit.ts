@@ -5,4 +5,7 @@ export const rateLimiter = rateLimit({
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: function (req, res) {
+    return req.path === "/api/v1/health";
+  },
 });
