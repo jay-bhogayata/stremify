@@ -36,10 +36,25 @@ const addMovieReqBody = z.object({
   warnings: z.string().min(3, {
     message: "Warnings must be at least 3 characters long",
   }),
+  additional_info: z.object({
+    origin_country: z.string(),
+    original_title: z.string(),
+    origin_country_certification: z.string(),
+    production_companies: z.array(z.string()),
+    director: z.string(),
+  }),
 });
 
 export const addMovie = asyncHandler(async (req: Request, res: Response) => {
   try {
+    if (typeof req.body?.additional_info === "string") {
+      try {
+        req.body.additional_info = JSON.parse(req.body.additional_info);
+      } catch (error) {
+        console.error("Error parsing additional_info", error);
+        throw new CustomError("Error parsing additional_info", 400);
+      }
+    }
     const {
       title,
       releaseYear,
@@ -49,6 +64,7 @@ export const addMovie = asyncHandler(async (req: Request, res: Response) => {
       genre,
       actors,
       warnings,
+      additional_info,
     } = addMovieReqBody.parse(req.body);
 
     const genreArr = genre.toLocaleLowerCase().trim().split(",");
@@ -97,6 +113,7 @@ export const addMovie = asyncHandler(async (req: Request, res: Response) => {
       warningsArr,
       poster_url,
       backdrop_url,
+      additional_info,
       db
     );
     res.status(201).json({ message: "Movie added" });
