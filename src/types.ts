@@ -20,3 +20,11 @@ declare module "express-session" {
     destroy(callback: (err: unknown) => void): void;
   }
 }
+
+export interface additionalInfo {
+  origin_country: string;
+  original_title: string;
+  origin_country_certification: string;
+  production_companies: string[];
+  director: string;
+}

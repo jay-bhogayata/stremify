@@ -5,6 +5,7 @@ import { redisClient } from "../kv";
 import {
   decimal,
   integer,
+  jsonb,
   pgTable,
   primaryKey,
   serial,
@@ -12,6 +13,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import { additionalInfo } from "../../types";
 
 export const MovieTable = pgTable("movies", {
   movie_id: serial("movie_id").primaryKey(),
@@ -21,6 +23,7 @@ export const MovieTable = pgTable("movies", {
   synopsis: text("synopsis"),
   rating: decimal("rating", { precision: 2, scale: 1 }),
   age_rating: varchar("age_rating"),
+  additional_info: jsonb("additional_info"),
   created_at: timestamp("created_at").notNull().defaultNow(),
   updated_at: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -123,6 +126,7 @@ export async function insertMovie(
   warnings: string[],
   poster_url: string,
   backdrop_url: string,
+  additional_info: additionalInfo,
   db: PostgresJsDatabase<any>
 ) {
   try {
@@ -135,6 +139,7 @@ export async function insertMovie(
           duration,
           synopsis,
           age_rating: ageRating,
+          additional_info: additional_info,
         })
         .returning({
           movie_id: MovieTable.movie_id,
@@ -302,6 +307,7 @@ export async function getMovieById(
         synopsis: MovieTable.synopsis,
         rating: MovieTable.rating,
         age_rating: MovieTable.age_rating,
+        additional_info: MovieTable.additional_info,
         created_at: MovieTable.created_at,
         updated_at: MovieTable.updated_at,
         genres: sql`array_agg(distinct jsonb_build_object('genre_id', ${GenreTable.genre_id}, 'genre_name', ${GenreTable.genre_name}))`,
@@ -344,6 +350,7 @@ export async function getMovieById(
         MovieTable.synopsis,
         MovieTable.rating,
         MovieTable.age_rating,
+        MovieTable.additional_info,
         MovieTable.created_at,
         MovieTable.updated_at
       )
