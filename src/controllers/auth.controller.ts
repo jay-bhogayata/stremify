@@ -234,7 +234,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       }
     });
 
-    res.status(200).json({ message: "login successful" });
+    res.status(200).json({ message: "login successful", user: sessionUser });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       const Errors = error.errors.map(({ path, message }) => ({
