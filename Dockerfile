@@ -20,7 +20,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 
 COPY . .
 
-COPY ../swagger.json ./swagger.json
+
 
 RUN pnpm run build
 
@@ -35,7 +35,7 @@ FROM base as prod
 
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./
-COPY --from=build /usr/src/app/swagger.json ./
+
 
 EXPOSE 8080
 
