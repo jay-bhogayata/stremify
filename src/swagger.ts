@@ -31,9 +31,9 @@ const swaggerOptions = {
     "./src/routes/*.ts",
     "./src/controllers/*.ts",
     "./src/types.ts",
-    "./src/routes/*.js",
-    "./src/controllers/*.js",
-    "./src/types.js",
+    "./routes/*.js",
+    "./controllers/*.js",
+    "./types.js",
   ],
 };
 
