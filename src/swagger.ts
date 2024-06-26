@@ -1,5 +1,4 @@
 import swaggerJsdoc from "swagger-jsdoc";
-import fs from "fs";
 
 const swaggerOptions = {
   definition: {
@@ -28,9 +27,14 @@ const swaggerOptions = {
       },
     },
   },
-  apis: ["./src/routes/*.ts", "./src/controllers/*.ts", "./src/types.ts"],
+  apis: [
+    "./src/routes/*.ts",
+    "./src/controllers/*.ts",
+    "./src/types.ts",
+    "./routes/*.js",
+    "./controllers/*.js",
+    "./types.js",
+  ],
 };
 
 export const swaggerDocs = swaggerJsdoc(swaggerOptions);
-
-fs.writeFileSync("./swagger.json", JSON.stringify(swaggerDocs, null, 2));
