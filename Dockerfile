@@ -36,4 +36,4 @@ COPY --from=build /usr/src/app/dist ./
 
 EXPOSE 8080
 
-CMD node dist/index.js
+CMD node index.js
