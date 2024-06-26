@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { eq } from "drizzle-orm";
 import { PostgresError } from "postgres";
-import { SignUpUserRequest, User } from "../../types";
+import { ResponseUser, SignUpUserRequest, User } from "../../types";
 import CustomError from "../../utils/customError";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { logger } from "../../utils/logger";
@@ -38,7 +38,7 @@ export const userTable = pgTable(
 export async function createUser(
   user: SignUpUserRequest,
   db: PostgresJsDatabase<any>
-): Promise<User> {
+): Promise<ResponseUser> {
   try {
     const createdUser = await db
       .insert(userTable)
@@ -52,6 +52,7 @@ export async function createUser(
         name: userTable.name,
         email: userTable.email,
         role: userTable.role,
+        verified: userTable.verified,
       });
 
     return createdUser[0];
