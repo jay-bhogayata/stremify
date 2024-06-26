@@ -32,7 +32,7 @@ COPY package.json .
 FROM base as prod
 
 COPY --from=deps /usr/src/app/node_modules ./node_modules
-COPY --from=build /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/dist ./
 
 EXPOSE 8080
 
