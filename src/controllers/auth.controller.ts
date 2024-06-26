@@ -17,13 +17,19 @@ import {
   insertOTP,
 } from "../database/models/otp";
 import { comparePassword, hashPassword } from "../utils/password";
-import { sendMail, PrepareEmailHtmlBody } from "../helpers/mail-helper";
+import { sendMail } from "../helpers/mail-helper";
 import { db } from "../database/connection";
 import { logger } from "../utils/logger";
 import { SessionData } from "express-session";
+import { PrepareEmailHtmlBody } from "../helpers/verify-mail-template";
 
 const sendVerificationEmail = async (email: string, otp: string) => {
-  const body: string = PrepareEmailHtmlBody(otp);
+  const verifyUserPageURL = `${config.FRONTEND_URL}/verifyuser`;
+  const body: string = PrepareEmailHtmlBody(
+    otp,
+    Number(config.OTP_EXPIRY_TIME_IN_MINUTES),
+    verifyUserPageURL
+  );
   try {
     await sendMail({
       to: email,
@@ -228,7 +234,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       }
     });
 
-    res.status(200).json({ message: "login successful" });
+    res.status(200).json({ message: "login successful", user: sessionUser });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       const Errors = error.errors.map(({ path, message }) => ({

@@ -280,10 +280,21 @@ describe("login", () => {
       mockReq.body.password,
       mockUser.password
     );
+
+    const mockResponseUser = {
+      id: mockUser.id,
+      name: mockUser.name,
+      email: mockUser.email,
+      role: mockUser.role,
+      verified: mockUser.verified,
+    };
     expect(mockReq.session.isLoggedIn).toBe(true);
     expect(mockReq.session.regenerate).toHaveBeenCalled();
     expect(mockRes.status).toHaveBeenCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith({ message: "login successful" });
+    expect(mockRes.json).toHaveBeenCalledWith({
+      message: "login successful",
+      user: mockResponseUser,
+    });
   });
 
   it("returns an error for an unverified user", async () => {
