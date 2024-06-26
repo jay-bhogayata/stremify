@@ -30,10 +30,10 @@ const swaggerOptions = {
   apis: [
     "./src/routes/*.ts",
     "./src/controllers/*.ts",
-    "./src/types.ts",
+    "./src/schemas.ts",
     "./routes/*.js",
     "./controllers/*.js",
-    "./types.js",
+    "./schemas.js",
   ],
 };
 
