@@ -33,7 +33,7 @@ app.use(
   apiReference({
     theme: "bluePlanet",
     spec: {
-      content: "./swagger.json",
+      content: swaggerDocs,
     },
     metaData: {
       title: "Stremify API DOCS",
