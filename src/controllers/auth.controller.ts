@@ -41,6 +41,37 @@ const sendVerificationEmail = async (email: string, otp: string) => {
   }
 };
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     SignUpRequestBody:
+ *       type: object
+ *       required:
+ *         - name
+ *         - email
+ *         - password
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: The user's full name.
+ *           minLength: 1
+ *           example: John Doe
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: The user's email address.
+ *           example: john.doe@example.com
+ *         password:
+ *           type: string
+ *           description: The user's password.
+ *           minLength: 8
+ *           example: password123
+ *       example:
+ *         name: John Doe
+ *         email: john.doe@example.com
+ *         password: password123
+ */
 const SignUpRequestBody = z.object({
   name: z.string().min(1, "username is required"),
   email: z
@@ -51,6 +82,63 @@ const SignUpRequestBody = z.object({
   }),
 });
 
+/**
+ * @openapi
+ * /api/v1/auth/signup:
+ *   post:
+ *     summary: User Signup
+ *     description: Creates a new user and sends a verification email with an OTP.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       description: The user information for signing up.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/SignUpRequestBody'
+ *     responses:
+ *       201:
+ *         description: Signup successful. User created and OTP sent for email verification.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: sign up successful
+ *                 user:
+ *                   $ref: '#/components/schemas/ResponseUser'
+ *       400:
+ *         description: Validation error in the request body.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       field:
+ *                         type: string
+ *                         example: email
+ *                       message:
+ *                         type: string
+ *                         example: Invalid email format. Please provide a valid email address
+ *       500:
+ *         description: Internal server error or failed to send verification email.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to send email
+ */
 export const signUp = asyncHandler(async (req: Request, res: Response) => {
   try {
     const { name, email, password } = SignUpRequestBody.parse(req.body);
@@ -98,6 +186,28 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
 });
 // TODO: if otp is send successfully but user is not verified then send them email about verification after some time use some kind of scheduler mechanism.
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     VerifyUserRequestBody:
+ *       type: object
+ *       required:
+ *         - email
+ *         - otp
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: The user's email address.
+ *           example: john.doe@example.com
+ *         otp:
+ *           type: string
+ *           description: The OTP for email verification.
+ *           minLength: 6
+ *           maxLength: 6
+ *           example: "123456"
+ */
 const verifyUserReqBody = z.object({
   email: z
     .string()
@@ -107,6 +217,83 @@ const verifyUserReqBody = z.object({
   }),
 });
 
+/**
+ * @openapi
+ * /api/v1/auth/verify:
+ *   post:
+ *     summary: Verify User
+ *     description: Verifies a user using the provided email and OTP.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       description: The email and OTP for user verification.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/VerifyUserRequestBody'
+ *     responses:
+ *       200:
+ *         description: User verified successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: user is verified successfully
+ *                 user:
+ *                   $ref: '#/components/schemas/ResponseUser'
+ *       400:
+ *         description: Validation error in the request body.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       field:
+ *                         type: string
+ *                         example: email
+ *                       message:
+ *                         type: string
+ *                         example: Invalid email format. Please provide a valid email address
+ *       401:
+ *         description: OTP expired or invalid.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: your otp is expired try getting new one
+ *       404:
+ *         description: User or OTP not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: user not found
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
 export const verifyUser = asyncHandler(async (req: Request, res: Response) => {
   try {
     const { otp, email } = verifyUserReqBody.parse(req.body);
@@ -177,6 +364,27 @@ export const verifyUser = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     LoginRequestBody:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: The user's email address.
+ *           example: john.doe@example.com
+ *         password:
+ *           type: string
+ *           description: The user's password.
+ *           minLength: 8
+ *           example: password123
+ */
 const loginRequestBody = z.object({
   email: z
     .string()
@@ -219,6 +427,78 @@ const createSessionUser = (user: User) => ({
   verified: user.verified,
 });
 
+/**
+ * @openapi
+ * /api/v1/auth/login:
+ *   post:
+ *     summary: User login
+ *     description: Authenticates a user and starts a session.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       description: The email and password for login.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginRequestBody'
+ *     responses:
+ *       200:
+ *         description: Login successful.
+ *         headers:
+ *           Set-Cookie:
+ *             schema:
+ *               type: string
+ *               example: sessionID=abcde12345; Path=/; HttpOnly
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: login successful
+ *                 user:
+ *                   $ref: '#/components/schemas/ResponseUser'
+ *       400:
+ *         description: Validation error in the request body.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       field:
+ *                         type: string
+ *                         example: email
+ *                       message:
+ *                         type: string
+ *                         example: Invalid email format. Please provide a valid email address
+ *       401:
+ *         description: Unauthorized, login failed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to login
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
 export const login = asyncHandler(async (req: Request, res: Response) => {
   try {
     const { email, password } = loginRequestBody.parse(req.body);
@@ -251,6 +531,48 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @openapi
+ * /api/v1/auth/logout:
+ *   post:
+ *     summary: User logout
+ *     description: Logs out a user and destroys the session.
+ *     tags:
+ *       - Authentication
+ *     security:
+ *      - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Logged out successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Logged out successfully
+ *       401:
+ *         description: User not logged in.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Could not log out, please try again
+ */
 export const logout = asyncHandler(async (req: Request, res: Response) => {
   (req.session as SessionData).destroy((err: unknown) => {
     if (err) {
@@ -264,6 +586,47 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+/**
+ * @openapi
+ * /api/v1/auth/me:
+ *   get:
+ *     summary: Get user profile
+ *     description: Retrieves the profile of the logged-in user.
+ *     tags:
+ *       - User
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: '#/components/schemas/ResponseUser'
+ *       401:
+ *         description: Unauthorized, user not logged in.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User not logged in
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
 export const profile = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({ user: (req.session as SessionData).user });
 });
