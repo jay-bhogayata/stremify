@@ -13,7 +13,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { additionalInfo } from "../../types";
+import { AdditionalInfo } from "../../types";
 
 export const MovieTable = pgTable("movies", {
   movie_id: serial("movie_id").primaryKey(),
@@ -126,7 +126,7 @@ export async function insertMovie(
   warnings: string[],
   poster_url: string,
   backdrop_url: string,
-  additional_info: additionalInfo,
+  additional_info: AdditionalInfo,
   db: PostgresJsDatabase<any>
 ) {
   try {
