@@ -1,4 +1,5 @@
 import swaggerJsdoc from "swagger-jsdoc";
+import fs from "fs";
 
 const swaggerOptions = {
   definition: {
@@ -38,3 +39,5 @@ const swaggerOptions = {
 };
 
 export const swaggerDocs = swaggerJsdoc(swaggerOptions);
+
+fs.writeFileSync("./swagger.json", JSON.stringify(swaggerDocs, null, 2));

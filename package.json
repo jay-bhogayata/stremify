@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsx ./src/index.ts",
     "dev": "tsx watch ./src/index.ts",
-    "build": "tsc",
+    "build": "tsx ./src/swagger.ts && tsc",
     "serve": "node ./dist/index.js",
     "test": "jest --verbose",
     "test:cov": "jest --coverage",

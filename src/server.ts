@@ -36,7 +36,7 @@ app.use(
       content: swaggerDocs,
     },
     metaData: {
-      title: "Stremify API DOCS",
+      title: "./swagger.json",
     },
     authentication: {
       apiKey: {
