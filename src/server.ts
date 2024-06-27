@@ -8,6 +8,8 @@ import { session_config } from "./helpers/session.helper";
 import cors from "cors";
 import { corsOptions } from "./utils/corsConfig";
 import config from "./config";
+import { apiReference } from "@scalar/express-api-reference";
+import { swaggerDocs } from "./swagger";
 
 const app = express();
 
@@ -25,6 +27,24 @@ app.use(morganMiddleware);
 app.use(rateLimiter);
 
 app.use("/api/v1", router);
+
+app.use(
+  "/docs",
+  apiReference({
+    theme: "bluePlanet",
+    spec: {
+      content: swaggerDocs,
+    },
+    metaData: {
+      title: "Stremify API DOCS",
+    },
+    authentication: {
+      apiKey: {
+        token: "",
+      },
+    },
+  })
+);
 
 app.all("*", (_req: Request, res: Response) => {
   res.status(404).json({ message: "Not Found" });

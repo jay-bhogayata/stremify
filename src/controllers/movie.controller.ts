@@ -45,6 +45,73 @@ const addMovieReqBody = z.object({
   }),
 });
 
+/**
+ * @openapi
+ * /api/v1/content/movies:
+ *   post:
+ *     summary: Insert a movie
+ *     description: Add a movie to the database.
+ *     tags:
+ *       - movies
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       description: The movie details.
+ *       required: true
+ *       content:
+ *        multipart/form-data:
+ *          schema:
+ *            $ref: '#/components/schemas/MovieReqBody'
+ *     responses:
+ *       200:
+ *         description: Movie added successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Movie added
+ *       400:
+ *         description: Validation error in the request body.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       field:
+ *                         type: string
+ *                         example: synopsis
+ *                       message:
+ *                         type: string
+ *                         example: Synopsis must be at least 10 characters long
+ *       401:
+ *         description: Unauthorized access. requires login and admin access.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
 export const addMovie = asyncHandler(async (req: Request, res: Response) => {
   try {
     if (typeof req.body?.additional_info === "string") {
@@ -122,6 +189,32 @@ export const addMovie = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @openapi
+ * api/v1/content/movies/all:
+ *   get:
+ *     summary: Get all movies
+ *     description: Get all movies from the database.
+ *     tags:
+ *      - movies
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved list of movies
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AllMoviesResponse'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Error getting movies"
+ */
 export const getAllMovie = asyncHandler(async (req: Request, res: Response) => {
   try {
     const resp = await getAllMovies(db);
@@ -131,6 +224,59 @@ export const getAllMovie = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @openapi
+ * /api/v1/content/movies/{id}:
+ *   get:
+ *     summary: Fetch a movie by its ID
+ *     tags:
+ *      - movies
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 11
+ *         description: The ID of the movie to fetch
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved movie details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DetailMovieInfo'
+ *       400:
+ *         description: Bad request - Missing ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Please provide an id"
+ *       404:
+ *         description: Movie not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Movie not found"
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Error getting movie"
+ */
 export const fetchMovieById = asyncHandler(
   async (req: Request, res: Response) => {
     try {
