@@ -126,8 +126,8 @@ export async function insertMovie(
   warnings: string[],
   poster_url: string,
   backdrop_url: string,
-  additional_info: AdditionalInfo,
-  db: PostgresJsDatabase<any>
+  db: PostgresJsDatabase<any>,
+  additional_info?: AdditionalInfo
 ) {
   try {
     await db.transaction(async (tx) => {
