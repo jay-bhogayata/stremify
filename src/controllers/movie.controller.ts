@@ -1,3 +1,4 @@
+import { Upload } from "@aws-sdk/lib-storage";
 import { Request, Response } from "express";
 import asyncHandler from "../utils/asyncHandler";
 import { z } from "zod";
@@ -161,8 +162,18 @@ export const addMovie = asyncHandler(async (req: Request, res: Response) => {
       ContentType: backdrop.mimetype,
     };
 
-    await s3.send(new PutObjectCommand(posterParams));
-    await s3.send(new PutObjectCommand(backdropParams));
+    const posterUpload = new Upload({
+      client: s3,
+      params: posterParams,
+    });
+
+    const backdropUpload = new Upload({
+      client: s3,
+      params: backdropParams,
+    });
+
+    await posterUpload.done();
+    await backdropUpload.done();
 
     const poster_url = `https://stremify-master-images.s3.amazonaws.com/${title}-poster.${
       poster.mimetype.split("/")[1]
@@ -187,6 +198,7 @@ export const addMovie = asyncHandler(async (req: Request, res: Response) => {
     );
     res.status(201).json({ message: "Movie added" });
   } catch (error: unknown) {
+    console.log(error);
     res.status(400).json({ message: error });
   }
 });
