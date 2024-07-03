@@ -229,6 +229,8 @@ export async function insertMovie(
         image_type: "backdrop",
       });
     });
+
+    redisClient.del("movies");
   } catch (error: any) {
     console.error("Error inserting movie", error);
     if (error.code === "23505") {
