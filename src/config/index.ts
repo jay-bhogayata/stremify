@@ -25,6 +25,7 @@ interface Config {
   };
   REDIS_URL: string;
   FRONTEND_URL?: string;
+  STRIPE_SECRET_KEY?: string;
 }
 
 const config: Config = {
@@ -53,9 +54,10 @@ const config: Config = {
   },
   REDIS_URL: process.env.REDIS_URL || "",
   FRONTEND_URL: process.env.FRONTEND_URL,
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
 };
 
-function checkEnvVariable(name: string, value: string) {
+function checkEnvVariable(name: string, value: string | undefined) {
   if (!value && process.env.NODE_ENV !== "test") {
     console.error(`No ${name}. Set ${name} environment variable.`);
     process.exit(1);
@@ -68,5 +70,5 @@ checkEnvVariable("AWS_ACCESS_KEY", config.AWS_ACCESS_KEY);
 checkEnvVariable("AWS_SECRET_ACCESS_KEY", config.AWS_SECRET_ACCESS_KEY);
 checkEnvVariable("AWS_SES_SENDER_EMAIL", config.AWS_SES_SENDER_EMAIL);
 checkEnvVariable("redis url", config.REDIS_URL);
-
+checkEnvVariable("STRIPE_SECRET_KEY", config.STRIPE_SECRET_KEY);
 export default config;
