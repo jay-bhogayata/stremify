@@ -26,6 +26,8 @@ interface Config {
   REDIS_URL: string;
   FRONTEND_URL?: string;
   STRIPE_SECRET_KEY?: string;
+  STRIPE_PLAN_ID?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
 }
 
 const config: Config = {
@@ -55,6 +57,8 @@ const config: Config = {
   REDIS_URL: process.env.REDIS_URL || "",
   FRONTEND_URL: process.env.FRONTEND_URL,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
+  STRIPE_PLAN_ID: process.env.STRIPE_PLAN_ID || "",
+  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || "",
 };
 
 function checkEnvVariable(name: string, value: string | undefined) {
@@ -71,4 +75,6 @@ checkEnvVariable("AWS_SECRET_ACCESS_KEY", config.AWS_SECRET_ACCESS_KEY);
 checkEnvVariable("AWS_SES_SENDER_EMAIL", config.AWS_SES_SENDER_EMAIL);
 checkEnvVariable("redis url", config.REDIS_URL);
 checkEnvVariable("STRIPE_SECRET_KEY", config.STRIPE_SECRET_KEY);
+checkEnvVariable("STRIPE_PLAN_ID", config.STRIPE_PLAN_ID);
+checkEnvVariable("STRIPE_WEBHOOK_SECRET", config.STRIPE_WEBHOOK_SECRET);
 export default config;
