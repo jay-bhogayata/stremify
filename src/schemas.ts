@@ -362,3 +362,62 @@
  *               image_type:
  *                 type: string
  */
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     getUserSubscriptionInfo:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         userId:
+ *           type: string
+ *         customerId:
+ *           type: string
+ *         status:
+ *           type: string
+ *           description: Current status of the subscription
+ *           example: active
+ *         planId:
+ *           type: string
+ *         currentPeriodStart:
+ *           type: string
+ *           format: date-time
+ *         currentPeriodEnd:
+ *           type: string
+ *           format: date-time
+ *         cancelAtPeriodEnd:
+ *           type: boolean
+ *         canceledAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         endedAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *       required:
+ *         - id
+ *         - userId
+ *         - customerId
+ *         - status
+ *         - planId
+ *         - currentPeriodStart
+ *         - currentPeriodEnd
+ *         - cancelAtPeriodEnd
+ *         - createdAt
+ *         - updatedAt
+ *     getUserSubscriptionInfoResponse:
+ *       type: object
+ *       properties:
+ *         userSubInfo:
+ *           $ref: '#/components/schemas/getUserSubscriptionInfo'
+ */

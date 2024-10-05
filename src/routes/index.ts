@@ -3,13 +3,19 @@ import { handleHealthCheck } from "../controllers";
 import authRouter from "./auth.routes";
 import vodRouter from "./vod.routes";
 import movieRouter from "./movies.routes";
-import { createSubscription } from "../controllers/subscription.controller";
+import {
+  createSubscription,
+  getUserSubscriptionInfo,
+} from "../controllers/subscription.controller";
 import { isAuthenticated } from "../middleware";
 
 const router: Router = express.Router();
 
 router.get("/health", handleHealthCheck);
+
 router.post("/create-sub", isAuthenticated, createSubscription);
+router.get("/sub-info", isAuthenticated, getUserSubscriptionInfo);
+
 router.use("/auth", authRouter);
 
 router.use("/vod", vodRouter);

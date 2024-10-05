@@ -9,7 +9,10 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { userTable } from "./user";
-import { relations } from "drizzle-orm";
+import { eq, relations } from "drizzle-orm";
+import CustomError from "../../utils/customError";
+import { logger } from "../../utils/logger";
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 export const subscriptionStatusEnum = pgEnum("subscription_status", [
   "active",
@@ -112,3 +115,21 @@ export const paymentRelations = relations(paymentTable, ({ one }) => ({
     references: [paymentProviderTable.id],
   }),
 }));
+
+export const getSubInfoByUserId = async (
+  userId: string,
+  db: PostgresJsDatabase<any>
+) => {
+  try {
+    const userSubInfo = await db
+      .select()
+      .from(subscriptionTable)
+      .where(eq(subscriptionTable.userId, userId));
+    return userSubInfo[0];
+  } catch (error) {
+    logger.error(
+      `failed to get subscription info for user with id: ${userId} : ${error}`
+    );
+    throw new CustomError("failed to get subscription info", 500);
+  }
+};

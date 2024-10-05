@@ -170,3 +170,82 @@ export interface AdditionalInfo {
   production_companies: string[];
   director: string;
 }
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     getUserSubscriptionInfo:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         userId:
+ *           type: string
+ *         customerId:
+ *           type: string
+ *         status:
+ *           type: string
+ *           description: Current status of the subscription
+ *           example: active
+ *         planId:
+ *           type: string
+ *         currentPeriodStart:
+ *           type: string
+ *           format: date-time
+ *         currentPeriodEnd:
+ *           type: string
+ *           format: date-time
+ *         cancelAtPeriodEnd:
+ *           type: boolean
+ *         canceledAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         endedAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *       required:
+ *         - id
+ *         - userId
+ *         - customerId
+ *         - status
+ *         - planId
+ *         - currentPeriodStart
+ *         - currentPeriodEnd
+ *         - cancelAtPeriodEnd
+ *         - createdAt
+ *         - updatedAt
+ *     getUserSubscriptionInfoResponse:
+ *       type: object
+ *       properties:
+ *         userSubInfo:
+ *           $ref: '#/components/schemas/getUserSubscriptionInfo'
+ */
+export interface getUserSubscriptionInfo {
+  id: string;
+  userId: string;
+  customerId: string;
+  status:
+    | "active"
+    | "canceled"
+    | "past_due"
+    | "pending"
+    | "paused"
+    | "not_started";
+  planId: string;
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+  cancelAtPeriodEnd: boolean;
+  canceledAt: Date | null;
+  endedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
