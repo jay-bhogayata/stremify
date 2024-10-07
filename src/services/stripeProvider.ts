@@ -9,6 +9,7 @@ import {
 import { User } from "../types";
 import { PaymentProvider } from "./PaymentProvider";
 import Stripe from "stripe";
+import { userTable } from "../database/models/user";
 
 export class StripeProvider implements PaymentProvider {
   private stripe: Stripe;
@@ -205,10 +206,24 @@ export class StripeProvider implements PaymentProvider {
           id: paymentTable.subscriptionId,
         });
 
-      await tx
+      const [userId] = await tx
         .update(subscriptionTable)
         .set({ status: subscriptionStatus })
-        .where(eq(subscriptionTable.id, id.id));
+        .where(eq(subscriptionTable.id, id.id))
+        .returning({
+          userId: subscriptionTable.userId,
+        });
+
+      if (paymentStatus === "succeeded" && subscriptionStatus === "active") {
+        const [user] = await tx
+          .update(userTable)
+          .set({ role: "subscriber" })
+          .where(eq(userTable.id, userId.userId))
+          .returning({
+            id: userTable.id,
+            role: userTable.role,
+          });
+      }
     });
 
     console.log(
