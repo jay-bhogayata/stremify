@@ -419,7 +419,7 @@ export const validateUser = async (email: string, password: string) => {
   return user;
 };
 
-const createSessionUser = (user: User) => ({
+export const createSessionUser = (user: User) => ({
   id: user.id,
   name: user.name,
   email: user.email,
@@ -630,3 +630,29 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
 export const profile = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({ user: (req.session as SessionData).user });
 });
+
+export const updateSession = async (req: Request, res: Response) => {
+  const user = await getUserByEmail(
+    (req.session as SessionData).user.email,
+    db
+  );
+
+  if (user) {
+    const sessionUser = createSessionUser(user);
+
+    (req.session as SessionData).isLoggedIn = true;
+    (req.session as SessionData).user = sessionUser;
+
+    req.session.regenerate((err: unknown) => {
+      if (err) {
+        throw new CustomError("Failed to login", 500);
+      }
+    });
+
+    res
+      .status(200)
+      .json({ message: "session update successful", user: sessionUser });
+  } else {
+    throw new CustomError("user not found", 404);
+  }
+};
