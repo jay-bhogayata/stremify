@@ -6,6 +6,8 @@ jest.mock("../../src/config/transporter");
 jest.mock("../../src/config/index");
 
 describe("sendMail", () => {
+  config.AWS_REGION = "us-east-1";
+
   it("should call transporter.sendMail with correct arguments", async () => {
     const mockMailOptions = {
       to: "test@example.com",
