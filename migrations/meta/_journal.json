@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1718612847807,
-      "tag": "0000_conscious_bill_hollister",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1718614758631,
-      "tag": "0001_orange_glorian",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1718614862547,
-      "tag": "0002_brown_abomination",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1719216001008,
-      "tag": "0003_burly_viper",
+      "when": 1721449074453,
+      "tag": "0000_busy_thena",
       "breakpoints": true
     }
   ]

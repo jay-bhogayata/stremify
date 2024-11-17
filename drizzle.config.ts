@@ -7,6 +7,7 @@ export default defineConfig({
     "./src/database/models/otp.ts",
     "./src/database/models/password_reset.ts",
     "./src/database/models/movie.ts",
+    "./src/database/models/subscription.ts",
   ],
   out: "./migrations",
   dialect: "postgresql",

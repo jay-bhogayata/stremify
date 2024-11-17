@@ -10,22 +10,59 @@ import { corsOptions } from "./utils/corsConfig";
 import config from "./config";
 import { apiReference } from "@scalar/express-api-reference";
 import { swaggerDocs } from "./swagger";
+import Stripe from "stripe";
+import { PaymentProviderFactory } from "./services/paymentProviderFactory";
 
-const app = express();
+export const app = express();
 
 app.set("trust proxy", 1);
 app.disable("x-powered-by");
-
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions[config.APP_ENV || "production"]));
-
-app.use(bodyParser.json());
 app.use(session(session_config));
-
 app.use(morganMiddleware);
 app.use(rateLimiter);
 
+const webhookRouter = express.Router();
+
+webhookRouter.post(
+  "/stripe",
+  express.raw({ type: "application/json" }),
+
+  (req: Request, res: Response) => {
+    if (config.STRIPE_SECRET_KEY) {
+      const stripe = new Stripe(config.STRIPE_SECRET_KEY, {
+        apiVersion: "2024-06-20",
+      });
+
+      let event;
+      try {
+        const sig = req.headers["stripe-signature"];
+        if (sig) {
+          event = stripe.webhooks.constructEvent(
+            req.body,
+            sig,
+            config.STRIPE_WEBHOOK_SECRET || ""
+          );
+          const provider = PaymentProviderFactory.getPaymentProvider("stripe");
+          provider.handleWebhook(event);
+          res.json({ received: true });
+        } else {
+          console.log("sig is not defended");
+          res.status(400);
+        }
+      } catch (error) {
+        console.error(error);
+        res.status(500);
+      }
+    } else {
+      res.status(400);
+    }
+  }
+);
+app.use("/api/v1/webhooks", webhookRouter);
+app.use(express.json());
+app.use(bodyParser.json());
 app.use("/api/v1", router);
 
 app.use(

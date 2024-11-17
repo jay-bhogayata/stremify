@@ -1,1 +1,0 @@
-ALTER TABLE "movies" ADD COLUMN "additional_info" jsonb;

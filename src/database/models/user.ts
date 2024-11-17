@@ -127,3 +127,25 @@ export async function getUserByEmail(
     throw new CustomError("failed to get user", 500);
   }
 }
+
+export async function getUserById(
+  userId: string,
+  db: PostgresJsDatabase<any>
+): Promise<User | null> {
+  try {
+    const user = await db
+      .select()
+      .from(userTable)
+      .where(eq(userTable.id, userId));
+    return user[0] || null;
+  } catch (error) {
+    if (error instanceof PostgresError) {
+      if (error.code === "P0002") {
+        throw new CustomError("user not found", 404);
+      }
+    }
+
+    logger.error(`failed to get user with id: ${userId} : ${error}`);
+    throw new CustomError("failed to get user", 500);
+  }
+}

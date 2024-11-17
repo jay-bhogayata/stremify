@@ -4,6 +4,7 @@ import {
   logout,
   profile,
   signUp,
+  updateSession,
   verifyUser,
 } from "../controllers/auth.controller";
 import { isAuthenticated } from "../middleware";
@@ -15,8 +16,6 @@ authRouter.post("/verify", verifyUser);
 authRouter.post("/login", login);
 authRouter.post("/logout", isAuthenticated, logout);
 authRouter.get("/me", isAuthenticated, profile);
-authRouter.get("/protected", isAuthenticated, (req: Request, res: Response) => {
-  res.json({ message: "This is a protected route" });
-});
+authRouter.get("/updateSession", isAuthenticated, updateSession);
 
 export default authRouter;

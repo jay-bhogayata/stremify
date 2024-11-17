@@ -126,8 +126,8 @@ export async function insertMovie(
   warnings: string[],
   poster_url: string,
   backdrop_url: string,
-  additional_info: AdditionalInfo,
-  db: PostgresJsDatabase<any>
+  db: PostgresJsDatabase<any>,
+  additional_info?: AdditionalInfo
 ) {
   try {
     await db.transaction(async (tx) => {
@@ -229,6 +229,8 @@ export async function insertMovie(
         image_type: "backdrop",
       });
     });
+
+    redisClient.del("movies");
   } catch (error: any) {
     console.error("Error inserting movie", error);
     if (error.code === "23505") {
