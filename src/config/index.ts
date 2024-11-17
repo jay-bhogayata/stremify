@@ -33,7 +33,7 @@ interface Config {
 const config: Config = {
   PORT: Number(process.env.PORT) || 3000,
   DATABASE_URL: process.env.DATABASE_URL || "",
-  AWS_REGION: process.env.AWS_REGION || "",
+  AWS_REGION: process.env.AWS_REGION || "us-eat-1",
   AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY || "",
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY || "",
   AWS_SES_SENDER_EMAIL: process.env.AWS_SES_SENDER_EMAIL || "",
