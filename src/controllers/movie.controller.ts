@@ -205,7 +205,7 @@ export const addMovie = asyncHandler(async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * api/v1/content/movies/all:
+ * /api/v1/content/movies/all:
  *   get:
  *     summary: Get all movies
  *     description: Get all movies from the database.
